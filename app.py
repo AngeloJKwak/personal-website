@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from projects_data import PROJECTS
 
 app = Flask(__name__)
 
@@ -8,7 +9,20 @@ app.config['SECRET_KEY'] = 'your-secret-key-here-change-in-production'
 @app.route('/')
 def home():
     """Homepage route"""
-    return render_template('index.html')
+    # Get featured projects for homepage, or top 3 by order if not enough featured
+    featured_projects = [p for p in PROJECTS if p.get('featured', False)]
+    
+    # If less than 3 featured, add more from top projects
+    if len(featured_projects) < 3:
+        all_projects_sorted = sorted(PROJECTS, key=lambda x: x.get('order', 999))
+        for project in all_projects_sorted:
+            if project not in featured_projects and len(featured_projects) < 3:
+                featured_projects.append(project)
+    
+    # Limit to 3 projects max
+    featured_projects = featured_projects[:3]
+    
+    return render_template('index.html', featured_projects=featured_projects)
 
 @app.route('/about')
 def about():
@@ -18,7 +32,21 @@ def about():
 @app.route('/projects')
 def projects():
     """Projects page route"""
-    return render_template('projects.html')
+    # Get the featured project (first one marked as featured)
+    featured = next((p for p in PROJECTS if p.get('featured', False)), None)
+    
+    # Get all projects sorted by order
+    all_projects = sorted(PROJECTS, key=lambda x: x.get('order', 999))
+    
+    # Get unique categories for filters
+    categories = set()
+    for project in PROJECTS:
+        categories.update(project.get('categories', []))
+    
+    return render_template('projects.html', 
+                         featured_project=featured,
+                         projects=all_projects,
+                         categories=sorted(categories))
 
 @app.errorhandler(404)
 def page_not_found(e):
