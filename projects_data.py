@@ -62,7 +62,7 @@ PROJECTS = [
     'links': {
         'website': 'https://www.udemy.com/course/the-complete-agentic-ai-engineering-course/',  # or None
         'demo': None,
-        'github': 'https://github.com/...',  # or None
+        'github': 'https://github.com/AngeloJKwak/ai-resume-bot',  # or None
         'appstore': None,
     },
     'featured': False,  # Only ONE project should be True

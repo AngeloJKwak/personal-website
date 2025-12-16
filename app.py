@@ -1,10 +1,25 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
+from flask_mail import Mail, Message
 from projects_data import PROJECTS
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
 # Configuration
-app.config['SECRET_KEY'] = 'your-secret-key-here-change-in-production'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here-change-in-production')
+
+# Email configuration
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True').lower() == 'true'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME', '')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD', '')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', '')
+
+mail = Mail(app)
 
 @app.route('/')
 def home():
@@ -52,6 +67,43 @@ def projects():
 def page_not_found(e):
     """404 error handler"""
     return render_template('404.html'), 404
+
+@app.route('/contact', methods=['POST'])
+def contact():
+    """Handle contact form submissions"""
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        if not data or not all(k in data for k in ['name', 'email', 'message']):
+            return jsonify({'success': False, 'error': 'Missing required fields'}), 400
+        
+        name = data['name']
+        email = data['email']
+        message = data['message']
+        
+        # Create email message
+        msg = Message(
+            subject=f'New Contact Form Submission from {name}',
+            recipients=[os.getenv('RECIPIENT_EMAIL', 'angelokwak@gmail.com')],
+            body=f'''
+Name: {name}
+Email: {email}
+
+Message:
+{message}
+            ''',
+            reply_to=email
+        )
+        
+        # Send email
+        mail.send(msg)
+        
+        return jsonify({'success': True, 'message': 'Thank you for your message! I\'ll get back to you soon.'}), 200
+        
+    except Exception as e:
+        app.logger.error(f'Error sending email: {str(e)}')
+        return jsonify({'success': False, 'error': 'Failed to send message. Please try again later.'}), 500
 
 @app.errorhandler(500)
 def internal_server_error(e):

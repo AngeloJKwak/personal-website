@@ -73,24 +73,66 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(section);
     });
     
-    // Form submission handler (if you want to handle it with JavaScript)
+    // Form submission handler
     const contactForm = document.querySelector('form');
     if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
+        const submitButton = contactForm.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton ? submitButton.textContent : 'Send Message';
+        
+        contactForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // Get form data
             const formData = new FormData(contactForm);
-            const data = Object.fromEntries(formData);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                message: formData.get('message')
+            };
             
-            // You can add AJAX submission here or keep the default form submission
-            console.log('Form submitted:', data);
+            // Validate form
+            if (!data.name || !data.email || !data.message) {
+                alert('Please fill in all fields.');
+                return;
+            }
             
-            // Show success message (you'll need to add this element to your HTML)
-            alert('Thank you for your message! I\'ll get back to you soon.');
+            // Disable submit button and show loading state
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Sending...';
+            }
             
-            // Reset form
-            contactForm.reset();
+            try {
+                // Send data to backend
+                const response = await fetch('/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    alert(result.message || 'Thank you for your message! I\'ll get back to you soon.');
+                    // Reset form
+                    contactForm.reset();
+                } else {
+                    // Show error message
+                    alert(result.error || 'Failed to send message. Please try again later.');
+                }
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                alert('An error occurred. Please try again later.');
+            } finally {
+                // Re-enable submit button
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalButtonText;
+                }
+            }
         });
     }
 });
