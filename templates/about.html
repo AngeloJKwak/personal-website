@@ -5,7 +5,15 @@
 {% block content %}
 <section class="py-20 bg-white">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-8">About Me</h1>
+        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8 mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900">About Me</h1>
+
+            <div class="w-48 h-48 md:w-56 md:h-56 rounded-full shadow-2xl overflow-hidden flex-shrink-0">
+                <img src="{{ url_for('static', filename='images/italy_trip.png') }}" 
+                     alt="Angelo Kwak" 
+                     class="w-full h-full object-cover scale-150">
+            </div>
+        </div>
         <div class="prose prose-lg max-w-none">
             <p class="text-xl text-gray-600 mb-6">
                 Hey, I’m Angelo — an AI Engineer who loves turning data and ideas into something real. 
@@ -21,6 +29,18 @@
             <p class="text-xl text-gray-600 mb-6">
                 Outside of work, I’m usually experimenting with new side projects, exploring ways AI can cross over into everyday life, or just diving down another rabbit hole of learning something new.
                 When I do decide to take off my "technical" hat, I love to exercise, play volleyball, spend time with my amazing wife and our corgi, Cheddar.
+            </p>
+            <div class="flex justify-center my-8">
+                <div class="w-64 h-64 md:w-80 md:h-80 rounded-2xl shadow-2xl overflow-hidden">
+                    <img src="{{ url_for('static', filename='images/cheddar.jpg') }}" 
+                         alt="Cheddar the corgi" 
+                         class="w-full h-full object-cover">
+                </div>
+            </div>
+            <p class="text-xl text-gray-600 mb-6">
+                I've been an avid gamer since I was a kid, and that passion has stuck with me. 
+                As a die-hard PC gamer, I built my own gaming rig from scratch and have helped friends and family build theirs too. 
+                Gaming was actually what first sparked my interest in technology — taking apart hardware, understanding how components work together, and optimizing performance. That curiosity has only deepened over the years.
             </p>
             <p class="text-xl text-gray-600 mb-6">
                 If there’s a theme to what I do, it’s this: keep learning, keep building, and keep finding smarter ways to solve problems.

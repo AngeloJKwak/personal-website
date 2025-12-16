@@ -14,10 +14,10 @@
                     Hi, I'm <span class="text-blue-600">Angelo Kwak</span>
                 </h1>
                 <p class="text-xl md:text-2xl text-gray-700 mb-4">
-                    AI Engineer & Problem Solver
+                    AI Engineer, Enthusiast and Problem Solver
                 </p>
                 <p class="text-lg text-gray-600 mb-8">
-                    My passion is building AI-powered solutions to complex problems — combining Python, web development, and user-focused design to create intelligent applications that make a real difference.
+                    My passion is designing and building AI-powered solutions to complex problems — combining Python, web development, and user-focused design to create intelligent applications that make a real difference.
                 </p>
                 <div class="flex flex-wrap gap-4">
                     <a href="{{ url_for('projects') }}" 
@@ -33,11 +33,11 @@
             
             <!-- Right Column - Image/Illustration -->
             <div class="flex justify-center">
-                <div class="w-64 h-64 md:w-80 md:h-80 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full shadow-2xl flex items-center justify-center">
-                    <!-- Replace this with your actual photo -->
-                    <svg class="w-32 h-32 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                    </svg>
+                <div class="w-64 h-64 md:w-80 md:h-80 rounded-full shadow-2xl overflow-hidden">
+                    <img src="{{ url_for('static', filename='images/me.png') }}" 
+                         alt="Angelo Kwak" 
+                         class="w-full h-full object-cover"
+                         style="object-position: center 30%;">
                 </div>
             </div>
         </div>
@@ -198,15 +198,15 @@
                     <h3 class="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h3>
                     <div class="space-y-4">
                         <div class="flex items-start">
-                            <svg class="w-6 h-6 text-blue-600 mr-4 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <!--<svg class="w-6 h-6 text-blue-600 mr-4 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
-                            <div>
+                             <div>
                                 <p class="font-semibold text-gray-900">Email</p>
                                 <a href="mailto:your.email@example.com" class="text-blue-600 hover:text-blue-700">
-                                    your.email@example.com
+                                    angelokwak@gmail.com
                                 </a>
-                            </div>
+                            </div> -->
                         </div>
                         
                         <div class="flex items-start">

@@ -54,8 +54,8 @@ PROJECTS = [
     'tagline': 'Talk to me! Well, an AI version of me...',  # Optional
     'description_short': 'AI Chatbot that can answer questions about my background and experience',
     'description_long': 'AI Chatbot that can answer questions about my background and experience',
-    'technologies': ['Python', 'Flask', 'React'],
-    'categories': ['web', 'python'],
+    'technologies': ['Python', 'OpenAI', 'Gradio', 'Hugging Face'],
+    'categories': ['web', 'python', 'ai'],
     'color': 'blue',  # blue, purple, green, orange, pink, teal, indigo, red
     'image': 'project.png',  # Put image in static/images/
     'image_type': 'logo',  # or 'screenshot'
