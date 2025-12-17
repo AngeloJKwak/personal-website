@@ -94,6 +94,7 @@ portfolio-website/
     ├── index.html        # Homepage
     ├── about.html        # About page
     └── projects.html     # Projects page
+    └── resume_bot.html     # Projects page
 ```
 
 ## Deployment
