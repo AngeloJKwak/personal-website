@@ -68,7 +68,27 @@ PROJECTS = [
     'huggingface_space': 'https://angelokwak-ai-resume-bot.hf.space',
     'featured': False,  # Only ONE project should be True
     'order': 2,  # Lower numbers appear first
-},
+    },
+    {
+    'id': 'mit-malaria-detection',
+    'name': 'Deep Learning for Malaria Detection',
+    'tagline': 'Detect malaria from images of red blood cells',
+    'description_short': 'Project from Applied Data Science Program: Leveraging AI for Effective Decision-Making by MIT Professional Education Detect malaria from images of red blood cells',
+    'description_long': 'Project from Applied Data Science Program: Leveraging AI for Effective Decision-Making by MIT Professional Education Detect malaria from images of red blood cells',
+    'technologies': ['Python', 'TensorFlow', 'Keras', 'CNN'],
+    'categories': ['machine_learning'],
+    'color': 'purple',  # blue, purple, green, orange, pink, teal, indigo, red
+    'image': 'project.png',  # Put image in static/images/
+    'image_type': 'logo',  # or 'screenshot'
+    'links': {
+        'website': 'https://www.mygreatlearning.com/mit-data-science-program?utm_source=eportfolio&gl_source=Linkedin&gl_campaign=Eportfolio',  # or None
+        'demo': None,
+        'github': 'https://github.com/AngeloJKwak/malaria-detection',  # or None
+        'appstore': None,
+    },
+    'featured': False,  # Only ONE project should be True
+    'order': 3,  # Lower numbers appear first
+    },
     
     # Add more projects below this line
     # Copy the template from QUICK_ADD_PROJECT.md
