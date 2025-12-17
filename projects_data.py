@@ -55,16 +55,17 @@ PROJECTS = [
     'description_short': 'AI Chatbot that can answer questions about my background and experience',
     'description_long': 'AI Chatbot that can answer questions about my background and experience',
     'technologies': ['Python', 'OpenAI', 'Gradio', 'Hugging Face'],
-    'categories': ['web', 'python', 'ai'],
+    'categories': ['web', 'python', 'ai', 'nlp'],
     'color': 'blue',  # blue, purple, green, orange, pink, teal, indigo, red
     'image': 'project.png',  # Put image in static/images/
     'image_type': 'logo',  # or 'screenshot'
     'links': {
         'website': 'https://www.udemy.com/course/the-complete-agentic-ai-engineering-course/',  # or None
-        'demo': None,
+        'demo': 'https://huggingface.co/spaces/angelokwak/ai-resume-bot',
         'github': 'https://github.com/AngeloJKwak/ai-resume-bot',  # or None
         'appstore': None,
     },
+    'huggingface_space': 'https://angelokwak-ai-resume-bot.hf.space',
     'featured': False,  # Only ONE project should be True
     'order': 2,  # Lower numbers appear first
 },

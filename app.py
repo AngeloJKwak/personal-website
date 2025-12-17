@@ -44,6 +44,11 @@ def about():
     """About page route"""
     return render_template('about.html')
 
+@app.route('/resume-bot')
+def resume_bot():
+    """AI Resume Bot dedicated page"""
+    return render_template('resume_bot.html')
+
 @app.route('/projects')
 def projects():
     """Projects page route"""
@@ -63,52 +68,50 @@ def projects():
                          projects=all_projects,
                          categories=sorted(categories))
 
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    """Contact page route"""
+    if request.method == 'POST':
+        # Handle form submission
+        return render_template('contact.html', success=True)
+    return render_template('contact.html')
+
+@app.route('/app/<app_id>')
+def embedded_app(app_id):
+    """Route for embedded Hugging Face apps - pulls from projects_data.py"""
+    # Find the project with matching ID
+    project = next((p for p in PROJECTS if p.get('id') == app_id), None)
+    
+    if not project or 'huggingface_space' not in project:
+        # If 404.html doesn't exist, return simple error
+        try:
+            return render_template('404.html'), 404
+        except:
+            return '<h1>404 - App Not Found</h1>', 404
+    
+    return render_template('app_embed.html',
+                         app_name=project['name'],
+                         app_description=project.get('description_long') or project['description_short'],
+                         huggingface_url=project['huggingface_space'],
+                         app_github=project['links'].get('github'))
+
 @app.errorhandler(404)
 def page_not_found(e):
     """404 error handler"""
-    return render_template('404.html'), 404
-
-@app.route('/contact', methods=['POST'])
-def contact():
-    """Handle contact form submissions"""
     try:
-        data = request.get_json()
-        
-        # Validate required fields
-        if not data or not all(k in data for k in ['name', 'email', 'message']):
-            return jsonify({'success': False, 'error': 'Missing required fields'}), 400
-        
-        name = data['name']
-        email = data['email']
-        message = data['message']
-        
-        # Create email message
-        msg = Message(
-            subject=f'New Contact Form Submission from {name}',
-            recipients=[os.getenv('RECIPIENT_EMAIL', 'angelokwak@gmail.com')],
-            body=f'''
-Name: {name}
-Email: {email}
-
-Message:
-{message}
-            ''',
-            reply_to=email
-        )
-        
-        # Send email
-        mail.send(msg)
-        
-        return jsonify({'success': True, 'message': 'Thank you for your message! I\'ll get back to you soon.'}), 200
-        
-    except Exception as e:
-        app.logger.error(f'Error sending email: {str(e)}')
-        return jsonify({'success': False, 'error': 'Failed to send message. Please try again later.'}), 500
+        return render_template('404.html'), 404
+    except:
+        return '<h1>404 - Page Not Found</h1>', 404
 
 @app.errorhandler(500)
 def internal_server_error(e):
     """500 error handler"""
-    return render_template('500.html'), 500
+    try:
+        return render_template('500.html'), 500
+    except:
+        return '<h1>500 - Server Error</h1>', 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
+
