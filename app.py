@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_mail import Mail, Message
 from projects_data import PROJECTS
 import os
+import re
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -68,13 +69,42 @@ def projects():
                          projects=all_projects,
                          categories=sorted(categories))
 
+EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    """Contact page route"""
-    if request.method == 'POST':
-        # Handle form submission
-        return render_template('contact.html', success=True)
-    return render_template('contact.html')
+    """Contact form endpoint. The form itself lives on the homepage."""
+    if request.method == 'GET':
+        return redirect(url_for('home', _anchor='contact'))
+
+    data = request.get_json(silent=True) or {}
+    name = (data.get('name') or '').strip()
+    email = (data.get('email') or '').strip()
+    message = (data.get('message') or '').strip()
+
+    if not name or not email or not message:
+        return jsonify({'error': 'Please fill in all fields.'}), 400
+    if not EMAIL_RE.match(email):
+        return jsonify({'error': 'Please enter a valid email address.'}), 400
+
+    recipient = os.getenv('RECIPIENT_EMAIL') or app.config['MAIL_DEFAULT_SENDER']
+    if not recipient or not app.config['MAIL_USERNAME']:
+        app.logger.error('Contact form submitted but mail is not configured (missing MAIL_USERNAME/RECIPIENT_EMAIL).')
+        return jsonify({'error': 'Message could not be sent right now. Please email me directly.'}), 503
+
+    try:
+        msg = Message(
+            subject=f'Portfolio contact from {name}',
+            recipients=[recipient],
+            reply_to=email,
+            body=f'From: {name} <{email}>\n\n{message}'
+        )
+        mail.send(msg)
+    except Exception:
+        app.logger.exception('Failed to send contact form email')
+        return jsonify({'error': 'Message could not be sent right now. Please try again later.'}), 500
+
+    return jsonify({'success': True, 'message': "Thanks for reaching out! I'll get back to you soon."})
 
 @app.route('/app/<app_id>')
 def embedded_app(app_id):
