@@ -3,6 +3,7 @@ from flask_mail import Mail, Message
 from projects_data import PROJECTS
 import os
 import re
+import socket
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -92,17 +93,28 @@ def contact():
         app.logger.error('Contact form submitted but mail is not configured (missing MAIL_USERNAME/RECIPIENT_EMAIL).')
         return jsonify({'error': 'Message could not be sent right now. Please email me directly.'}), 503
 
+    msg = Message(
+        subject=f'Portfolio contact from {name}',
+        recipients=[recipient],
+        reply_to=email,
+        body=f'From: {name} <{email}>\n\n{message}'
+    )
+
+    # smtplib has no timeout by default, so a blocked/unreachable SMTP port
+    # hangs the request until the reverse proxy kills it. Bound it here so
+    # we fail fast with a real JSON error instead.
+    previous_timeout = socket.getdefaulttimeout()
+    socket.setdefaulttimeout(8)
     try:
-        msg = Message(
-            subject=f'Portfolio contact from {name}',
-            recipients=[recipient],
-            reply_to=email,
-            body=f'From: {name} <{email}>\n\n{message}'
-        )
         mail.send(msg)
+    except (socket.timeout, TimeoutError, ConnectionError, OSError):
+        app.logger.exception('Timed out or failed connecting to the mail server')
+        return jsonify({'error': "Message couldn't be sent (mail server unreachable). Please email me directly."}), 502
     except Exception:
         app.logger.exception('Failed to send contact form email')
         return jsonify({'error': 'Message could not be sent right now. Please try again later.'}), 500
+    finally:
+        socket.setdefaulttimeout(previous_timeout)
 
     return jsonify({'success': True, 'message': "Thanks for reaching out! I'll get back to you soon."})
 

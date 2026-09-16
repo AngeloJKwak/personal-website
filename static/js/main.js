@@ -102,6 +102,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitButton.textContent = 'Sending...';
             }
             
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+
             try {
                 // Send data to backend
                 const response = await fetch('/contact', {
@@ -109,24 +112,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify(data),
+                    signal: controller.signal
                 });
-                
-                const result = await response.json();
-                
-                if (result.success) {
+
+                const contentType = response.headers.get('content-type') || '';
+                const result = contentType.includes('application/json') ? await response.json() : null;
+
+                if (response.ok && result?.success) {
                     // Show success message
                     alert(result.message || 'Thank you for your message! I\'ll get back to you soon.');
                     // Reset form
                     contactForm.reset();
                 } else {
                     // Show error message
-                    alert(result.error || 'Failed to send message. Please try again later.');
+                    alert(result?.error || 'Failed to send message. Please try again later.');
                 }
             } catch (error) {
                 console.error('Error submitting form:', error);
-                alert('An error occurred. Please try again later.');
+                if (error.name === 'AbortError') {
+                    alert('The request timed out. Please try again later or email me directly.');
+                } else {
+                    alert('An error occurred. Please try again later.');
+                }
             } finally {
+                clearTimeout(timeoutId);
                 // Re-enable submit button
                 if (submitButton) {
                     submitButton.disabled = false;
